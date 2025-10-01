@@ -1315,6 +1315,8 @@
             } else {
                 paginatedData.forEach(item => {
                     const row = atendimentosTableBody.insertRow();
+                    // Garante que o ID do documento Firestore seja passado para os botões de ação
+                    const docId = item.id;
                     row.innerHTML = `
                         <td>${item.protocolo}</td>
                         <td>${item.setor}</td>
@@ -1322,8 +1324,8 @@
                         <td>${item.colaborador}</td>
                         <td>${formatDate(item.date)}</td>
                         <td>
-                            <button class="action-btn edit-btn" data-id="${item.id}" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn delete-btn" data-id="${item.id}" title="Excluir"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn edit-btn" data-id="${docId}" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete-btn" data-id="${docId}" title="Excluir"><i class="fas fa-trash"></i></button>
                         </td>
                     `;
                 });
@@ -1432,13 +1434,14 @@
         atendimentosTableBody.addEventListener('click', async (e) => { // Adicionado 'async'
             const target = e.target.closest('button');
             if (!target) return;
-            const id = target.dataset.id; // Este ID deve ser o ID do documento Firestore
+            // Pegamos o ID do documento Firestore do atributo data-id
+            const docId = target.dataset.id; 
 
             if (target.classList.contains('delete-btn')) {
                 if (confirm('Tem certeza que deseja excluir este registro?')) {
                     try {
                         // ** LÓGICA DE DELEÇÃO FIREBASE **
-                        await db.collection("atendimentos").doc(id).delete();
+                        await db.collection("atendimentos").doc(docId).delete();
                         await loadStats(); // Recarrega para atualizar a tabela
                         showNotification('Registro excluído.');
                     } catch (error) {
@@ -1447,10 +1450,9 @@
                     }
                 }
             } else if (target.classList.contains('edit-btn')) {
-                // ... LÓGICA DE EDIÇÃO (não alterada neste passo)
-                const record = stats.history.find(item => item.id === id);
+                const record = stats.history.find(item => item.id === docId);
                 if (record) {
-                    currentEditId = id;
+                    currentEditId = docId;
                     getEl('editProtocolo').value = record.protocolo;
                     populateSelect(getEl('editViaContato'), config.selectOptions.viaContato, record.viaContato);
                     populateSelect(getEl('editSetor'), config.selectOptions.setor, record.setor);
