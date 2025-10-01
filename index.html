@@ -997,7 +997,7 @@
         const formatDate = (dateString) => new Date(dateString).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         
         const populateSelect = (selectElement, options, selectedValue = '') => {
-            selectElement.innerHTML = `<option value="">Selecione...</option>` + options.map(opt => `<option value="${opt}" ${opt === selectedValue ? 'selected' : ''}>${opt}</option>`).join('');
+            selectElement.innerHTML = `<option value="">Selecione...</option>` + options.map(opt => `<option value="${opt}" ${opt === selectedValue ? 'selected' : ''}>${opt}</option>`.join(''));
             selectElement.value = selectedValue;
         };
         
@@ -1060,7 +1060,7 @@
                     ...doc.data()
                 }));
                 
-                // CORREÇÃO: Chama updateAll IMEDIATAMENTE após o carregamento ser concluído
+                // Chamamos a atualização apenas após a coleta bem-sucedida dos dados
                 updateAll(); 
 
             } catch (error) {
@@ -1669,7 +1669,8 @@
         getEl('export-xml').addEventListener('click', () => exportData('xml'));
 
         // --- INICIALIZAÇÃO ---
-        const init = () => {
+        const init = async () => {
+            // 1. Carrega as opções de seleção (sincronamente)
             Object.keys(config.selectOptions).forEach(key => {
                 const selectId = key;
                 const selectEl = getEl(selectId);
@@ -1681,10 +1682,13 @@
                     populateSelect(editSelectEl, config.selectOptions[key]);
                 }
             });
-            // AQUI CHAMAMOS O NOVO loadStats() assíncrono
-            loadStats(); 
+
+            // 2. CHAMA O CARREGAMENTO DE DADOS (Assíncrono)
+            // Força a espera até que os dados estejam em stats.history
+            await loadStats(); 
         };
 
+        // Chamada final para iniciar o aplicativo
         init();
     });
     </script>
