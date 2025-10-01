@@ -1382,6 +1382,11 @@
                 tabContents.forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
                 getEl(`${this.dataset.tab}-tab`).classList.add('active');
+
+                // NOVO AJUSTE: Força a recarga da tabela de gerenciamento ao clicar na aba
+                if (this.dataset.tab === 'gerenciamento') {
+                    updateManagementTable();
+                }
             });
         });
         
