@@ -1315,7 +1315,7 @@
             } else {
                 paginatedData.forEach(item => {
                     const row = atendimentosTableBody.insertRow();
-                    // Garante que o ID do documento Firestore seja passado para os botões de ação
+                    // Pegamos o ID do documento Firestore do atributo data-id
                     const docId = item.id;
                     row.innerHTML = `
                         <td>${item.protocolo}</td>
@@ -1568,9 +1568,7 @@
             const file = event.target.files[0];
             if (!file) return;
             
-            // NOTE: A importação CSV precisa ser adaptada para salvar no Firebase. 
-            // A importação CSV localmente não faz mais nada.
-            // Para importação REAL no Firebase, cada registro precisaria de um '.add()' no loop.
+            // NOTE: A importação CSV está desativada por motivos de complexidade de segurança e autenticação do Firebase.
 
             const reader = new FileReader();
             reader.onload = async function(e) { // Adicionado 'async'
