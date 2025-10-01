@@ -907,17 +907,17 @@
         
         // ========================================================
         // 1. CONEXÃO E INICIALIZAÇÃO FIREBASE 
-        //    *** CREDENCIAIS REAIS DO SEU PROJETO ABAIXO ***
+        //    *** CREDENCIAIS REAIS DO SEU PROJETO INSERIDAS ***
         // ========================================================
         
         const firebaseConfig = {
-          apiKey: "AIzaSyAgfzCRr0kSPcoAdbpsc9TF21iBawwc0KU", // CHAVE REAL INSERIDA
-          authDomain: "banco-de-dados-7d248.firebaseapp.com", // CHAVE REAL INSERIDA
-          projectId: "banco-de-dados-7d248", // CHAVE REAL INSERIDA
-          storageBucket: "banco-de-dados-7d248.firebasestorage.app", // CHAVE REAL INSERIDA
-          messagingSenderId: "268607318251", // CHAVE REAL INSERIDA
-          appId: "1:268607318251:web:4314c9833c78927c1db6ae", // CHAVE REAL INSERIDA
-          measurementId: "G-VX0EPLQ129" // CHAVE REAL INSERIDA
+          apiKey: "AIzaSyDItGkqOdZ39lw_2ZqRtsdpBqdI3NMgXNI", 
+          authDomain: "banco-de-dados-7d248.firebaseapp.com",
+          projectId: "banco-de-dados-7d248",
+          storageBucket: "banco-de-dados-7d248.firebasestorage.app",
+          messagingSenderId: "268607318251",
+          appId: "1:268607318251:web:4314c9833c78927c1db6ae", 
+          measurementId: "G-VX0EPLQ129"
         };
 
         if (typeof firebase !== 'undefined') {
@@ -1048,11 +1048,9 @@
                 
                 // Mapeia os documentos do Firebase para o array stats.history
                 stats.history = snapshot.docs.map(doc => ({
-                    id: doc.id, // Usa o ID gerado pelo Firestore
+                    id: doc.id, // Usa o ID gerado pelo Firestore (necessário para deletar/editar)
                     ...doc.data()
                 }));
-                
-                // Removemos a injeção local, pois os dados virão da nuvem.
                 
                 updateAll();
             } catch (error) {
@@ -1489,11 +1487,11 @@
         });
         
         document.querySelectorAll('.control-btn').forEach(btn => {
-            // ... (Listener para os botões de filtro e reset)
+            // Verifica se o botão é o de reset, se sim, ignora as classes 'active'
             if(btn.id !== 'resetRecordsBtn') {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.control-btn').forEach(b => {
-                        if (b.id !== 'resetRecordsBtn') {
+                        if (!b.id !== 'resetRecordsBtn') {
                             b.classList.remove('active');
                         }
                     });
