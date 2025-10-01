@@ -1052,7 +1052,9 @@
                     ...doc.data()
                 }));
                 
-                updateAll();
+                // CORREÇÃO APLICADA AQUI: Chama updateAll APÓS 500ms
+                setTimeout(updateAll, 500); 
+
             } catch (error) {
                 console.error("Erro ao carregar dados do Firebase:", error);
                 showNotification('Erro ao conectar ou carregar dados do banco de dados.', 5000);
