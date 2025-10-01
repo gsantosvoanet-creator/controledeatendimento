@@ -1039,6 +1039,14 @@
             await loadStats(); 
         };
 
+        // --- FUNÇÃO MESTRE DE ATUALIZAÇÃO ---
+        const updateAll = () => {
+            updateDashboard();          // Atualiza Visão Geral e Gráfico de Barras Horizontal
+            updateManagementTable();    // Atualiza Tabela de Gerenciamento
+            updateCompleteDashboard();  // Atualiza Dashboard Completo e Gráfico Vertical
+        };
+        // --- FIM DA FUNÇÃO MESTRE DE ATUALIZAÇÃO ---
+
         // Função principal para carregar dados (AGORA CARREGA DO FIREBASE)
         const loadStats = async () => {
             try {
@@ -1052,8 +1060,8 @@
                     ...doc.data()
                 }));
                 
-                // CORREÇÃO APLICADA AQUI: Chama updateAll APÓS 500ms para dar tempo dos elementos carregarem
-                setTimeout(updateAll, 500); 
+                // CORREÇÃO: Chama updateAll IMEDIATAMENTE após o carregamento ser concluído
+                updateAll(); 
 
             } catch (error) {
                 console.error("Erro ao carregar dados do Firebase:", error);
@@ -1541,13 +1549,19 @@
             if(e.target === exportModal) exportModal.style.display = 'none';
         });
 
-        refreshBtn.addEventListener('click', () => {
+        refreshBtn.addEventListener('click', async () => {
             refreshBtn.classList.add('fa-spin');
-            // Recarrega os dados do Firebase
-            loadStats().finally(() => { 
-                refreshBtn.classList.remove('fa-spin');
+            
+            try {
+                // AGORA CHAMA loadStats() que busca no Firebase e chama updateAll()
+                await loadStats(); 
                 showNotification('Dashboard atualizado!');
-            });
+            } catch (error) {
+                console.error("Falha ao atualizar dashboard:", error);
+                showNotification('Erro na atualização!', 5000);
+            } finally {
+                refreshBtn.classList.remove('fa-spin');
+            }
         });
 
         // --- LÓGICA DE IMPORTAÇÃO E EXPORTAÇÃO ---
