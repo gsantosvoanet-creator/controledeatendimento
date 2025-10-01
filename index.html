@@ -1052,7 +1052,7 @@
                     ...doc.data()
                 }));
                 
-                // CORREÇÃO APLICADA AQUI: Chama updateAll APÓS 500ms
+                // CORREÇÃO APLICADA AQUI: Chama updateAll APÓS 500ms para dar tempo dos elementos carregarem
                 setTimeout(updateAll, 500); 
 
             } catch (error) {
