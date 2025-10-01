@@ -911,13 +911,13 @@
         // ========================================================
         
         const firebaseConfig = {
-          apiKey: "AIzaSyDItGkqOdZ39lw_2ZqRtsdpBqdI3NMgXNI", 
+          apiKey: "AIzaSyDAv1U7CtPy10bwQ6xHzIlKbAJGxB2Z_lw", 
           authDomain: "banco-de-dados-7d248.firebaseapp.com",
           projectId: "banco-de-dados-7d248",
           storageBucket: "banco-de-dados-7d248.firebasestorage.app",
           messagingSenderId: "268607318251",
           appId: "1:268607318251:web:4314c9833c78927c1db6ae", 
-          measurementId: "G-VX0EPLQ129"
+          measurementId: "G-VX0EPLQ129" 
         };
 
         if (typeof firebase !== 'undefined') {
@@ -1491,7 +1491,7 @@
             if(btn.id !== 'resetRecordsBtn') {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.control-btn').forEach(b => {
-                        if (!b.id !== 'resetRecordsBtn') {
+                        if (b.id !== 'resetRecordsBtn') {
                             b.classList.remove('active');
                         }
                     });
@@ -1567,7 +1567,7 @@
             if (!file) return;
             
             // NOTE: A importação CSV precisa ser adaptada para salvar no Firebase. 
-            // Por enquanto, o código abaixo apenas processa localmente.
+            // A importação CSV localmente não faz mais nada.
             // Para importação REAL no Firebase, cada registro precisaria de um '.add()' no loop.
 
             const reader = new FileReader();
@@ -1579,8 +1579,7 @@
                         return showNotification('Arquivo CSV vazio ou com dados insuficientes.', 4000);
                     }
                     
-                    // ... (mantido código de parsing CSV, mas removida a lógica de push para stats.history)
-                    // Para fins de demonstração, a importação CSV localmente não faz mais nada.
+                    // ... (mantido código de parsing CSV)
                     showNotification('Importação CSV localmente desativada. Envie manualmente para o Firebase.', 6000);
                     
                 } catch(error) {
