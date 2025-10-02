@@ -287,12 +287,6 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(227, 6, 19, 0.2);
         }
-        .stat-title {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
         /* Corrigido o título da retenção */
         .stat-title.retido-metric {
             color: #90ee90; /* Cor verde clara para Retido */
@@ -766,10 +760,10 @@
                                 <div class="stat-title">Retenção</div>
                                 <div class="stat-value" id="dashboardRetencao">0</div>
                             </div>
-                             <div class="stat-card">
-                                <div class="stat-icon"><i class="fas fa-thumbs-up"></i></div>
-                                <div class="stat-title">Sucesso Cliente</div>
-                                <div class="stat-value" id="dashboardSucessoCliente">0</div>
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                                <div class="stat-title">Retidos (Status)</div>
+                                <div class="stat-value" id="dashboardRetidos">0</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-icon"><i class="fas fa-poll"></i></div>
@@ -946,12 +940,14 @@
             statusAndamento: ["TRATANDO", "SOLUCIONANDO", "ANDAMENTO"],
             setorColors: {
                 'SUPORTE': '#3498db', 'COMERCIAL': '#2ecc71', 'CAMPO': '#f1c40f', 'FINANCEIRO': '#e74c3c',
-                'LOGISTICA': '#9b59b6', 'RETENÇÃO': '#e67e22', 'SUCESSO DO CLIENTE': '#34495e',
+                'LOGISTICA': '#9b59b6', 'RETENÇÃO': '#e67e22', 
+                // REMOVIDO: 'SUCESSO DO CLIENTE' para esta métrica
                 'PESQUISA-CX': '#ff8c00' 
             },
             selectOptions: {
                 viaContato: ["RA", "PÓS ATENDIMENTO", "OUVIDORIA", "MONITORIA", "AVALIAÇÃO (CHAT)", "ACOMPANHAMENTO (RETENÇÃO)", "PESQUISA-CX"],
-                setor: ["SUPORTE", "COMERCIAL", "CAMPO", "FINANCEIRO", "LOGISTICA", "RETENÇÃO", "SUCESSO DO CLIENTE", "PESQUISA-CX"], 
+                // REMOVIDO: 'SUCESSO DO CLIENTE'
+                setor: ["SUPORTE", "COMERCIAL", "CAMPO", "FINANCEIRO", "LOGISTICA", "RETENÇÃO", "PESQUISA-CX"], 
                 status: ["SOLUCIONADO", "SOLUCIONANDO", "RETIDO", "NÃO RETIDO", "TRATADO", "TRATANDO", "RESOLVIDO", "NÃO RESOLVIDO", "ELOGIO", "ENCERRADO"],
                 colaborador: ["ADINAIANA", "ANA CAROLINE", "ANDRESSA FORTUNA", "CAMILA MACEDO", "CAMILLY", "EDSON NUNES", "ELIENE SOUZA", "GABRIEL CONCEIÇÃO", "GERLAN", "GILDEANDERSON", "JAYLE", "JORGE THALISSON", "JOSE DOMINGOS", "JOSIVALDO", "KELIANE", "KEVIN", "LUCAS PAIXÃO", "LUIZ GUSTAVO", "MARILIA", "MARIO MARCELO", "PALOMA", "PEDRO GABRIEL", "RONAN LÍDIO", "SAMUEL", "TAMARA", "VANESSA", "VINICIUS NUNES"]
             }
@@ -987,6 +983,8 @@
         const dashboardTotal = getEl('dashboardTotal');
         const dashboardPesquisaCX = getEl('dashboardPesquisaCX');
         const dashboardNaoRetido = getEl('dashboardNaoRetido'); 
+        const dashboardRetidos = getEl('dashboardRetidos'); // O NOVO ID
+        const dashboardSucessoCliente = getEl('dashboardSucessoCliente'); // O ID REMOVIDO NO HTML
 
         // --- ESTADO DA APLICAÇÃO ---
         let stats = { history: [] }; 
@@ -1089,6 +1087,10 @@
                     sectorKey = 'PESQUISA-CX';
                 }
 
+                // ** CORREÇÃO: Pula o setor SUCESSO DO CLIENTE, que foi removido **
+                if (sectorKey === 'SUCESSO DO CLIENTE') return acc;
+
+
                 if (sectorKey && config.setorColors[sectorKey]) {
                     acc[sectorKey] = (acc[sectorKey] || 0) + 1;
                 }
@@ -1146,6 +1148,10 @@
                 if (!sectorKey && item.viaContato === 'PESQUISA-CX') {
                     sectorKey = 'PESQUISA-CX';
                 }
+
+                // ** CORREÇÃO: Pula o setor SUCESSO DO CLIENTE, que foi removido **
+                if (sectorKey === 'SUCESSO DO CLIENTE') return acc;
+
 
                 if (sectorKey && config.setorColors[sectorKey]) {
                     acc[sectorKey] = (acc[sectorKey] || 0) + 1;
@@ -1263,7 +1269,9 @@
             getEl('dashboardFinanceiro').textContent = filteredData.filter(i => i.setor === 'FINANCEIRO').length;
             getEl('dashboardLogistica').textContent = filteredData.filter(i => i.setor === 'LOGISTICA').length;
             getEl('dashboardRetencao').textContent = filteredData.filter(i => i.setor === 'RETENÇÃO').length;
-            getEl('dashboardSucessoCliente').textContent = filteredData.filter(i => i.setor === 'SUCESSO DO CLIENTE').length;
+            
+            // NOVO: Retidos (Status) no lugar de Sucesso Cliente
+            dashboardRetidos.textContent = filteredData.filter(i => i.status === 'RETIDO').length;
             
             // Pesquisa CX filtra por Via de Contato.
             dashboardPesquisaCX.textContent = filteredData.filter(i => i.viaContato === 'PESQUISA-CX').length; 
@@ -1412,7 +1420,7 @@
             // A verificação de duplicidade precisa ser feita contra o Firebase, 
             // mas mantemos a validação de formato local.
             const isDuplicate = stats.history.some(item => item.protocolo.toLowerCase() === protocolo.toLowerCase());
-            duplicateWarning.style.display = isDuplicate && protocolo ? 'block' : 'none';
+            duplicateWarning.style.display = 'block' : 'none';
         });
 
         saveBtn.addEventListener('click', async () => { // Adicionado 'async'
